@@ -1,0 +1,7 @@
+export(mpe,mspe,rpe,rspe,print.pemix,print.spemix)
+importFrom(mvtnorm,dmvnorm)
+importFrom("stats", "cov.wt", "dnorm", "kmeans", "mahalanobis",
+             "median", "na.omit", "pnorm", "rgamma", "rnorm", "runif",
+             "uniroot")
+S3method(print, pemix)
+S3method(print, spemix)
