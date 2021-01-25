@@ -1,6 +1,6 @@
-mixSPE v0.1.1 (Release date: 2019-06-18)
+mixSPE v0.9.1 (Release date: 2021-19-01)
 ==============
-First release.
+Complete rewrite of code with one function being the workhorse now: EMGr, in which skewness is an argument so it can be toggled on and off easily. Previous functions mpe and mspe are no longer available. The new code is much more efficient.
 
 mixSPE v0.1.0 (Release date: 2019-06-18)
 ==============

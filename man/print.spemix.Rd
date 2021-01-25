@@ -19,5 +19,3 @@ Ignore this
 \author{
 Utkarsh J. Dang, Michael P. B. Gallaugher, Ryan P. Browne, and Paul D. McNicholas
 }
-
-
