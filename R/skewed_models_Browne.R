@@ -330,9 +330,9 @@ objGam = function(gam=NULL, tr = NULL, lam=NULL,  beta=NULL, wt=NULL) {
   return(val)
 }
 
-retractionZ.X = function(X, Z) { return(qr.Rplus(Z+X)$q) }
+retractionZ.X = function(X, Z) { return(qrout(Z+X)$q) }
 
-qr.Rplus = function(X) {
+qrout = function(X) { #originally called qr.Rplus; changed on suggestion from CRAN
   z = qr(X)
   q = qr.Q(z,TRUE)
   r = qr.R(z,TRUE)
@@ -575,27 +575,38 @@ getall <- function(loglik) {
 
 
 
-igpar <- function(data=NULL, G=NULL, m=10, n=10, model=NULL) {
+igpar <- function(data=NULL, G=NULL, m=10, n=10, model=NULL, randonly=FALSE) {
   ### m is the number of random starts
   ### n is the number of EM iterations
-
-  z = numeric(m+2)
+  if(randonly==TRUE) m = 10
+  nk = 9
+  z = numeric(m+nk+1)
   gparn <- list()
   for (i in 1:length(z) ) gparn[[i]] = list()
 
   getlogden   = create.logz(x=data, G=G, model=model)
 
-  gparn[[1]] = igpar.kmeans(data=data, G=G,  n=n, model=model)
+#  gparn[[1]] = igpar.hclust(data=data, G=G,  n=n, model=model)
+	gparn[[1]] = igpar.kmeans(data=data, G=G,  n=n, model=model)
   z[1] = logden.to.loglik(getlogden(gparn[[1]]), gparn[[1]]$pi)
 
-  gparn[[2]] = igpar.hclust(data=data, G=G,  n=n, model=model)
-  z[2] = logden.to.loglik(getlogden(gparn[[2]]), gparn[[2]]$pi)
+  for (i in 2:(nk+1)) {
 
-  for (i in 3:length(z)) {
+  	gparn[[i]] = igpar.kmeans(data=data, G=G,  n=n, model=model)
+  	z[i] = logden.to.loglik(getlogden(gparn[[i]]), gparn[[i]]$pi)
+  }
+
+  for (i in (nk+2):length(z)) {
     gparn[[i]] = igpar.wt(data=data, G=G, n=n, model=model)
     z[i] = logden.to.loglik(getlogden(gparn[[i]]), gparn[[i]]$pi)
   }
-
+# print(z)
+  if(randonly==TRUE)
+    {
+    z[1:10] <- -Inf #10 random starts only; remove kmeans starts from contention
+  } else {
+    z[11:20] <- -Inf
+    }
   remove = is.infinite(z)
   z      = z[!remove]
   gparn  = gparn[!remove]
@@ -613,16 +624,17 @@ igpar.wt <- function(data=NULL, G=2, n=10, wt=NULL, model=NULL) {
 
   if (is.null(wt)) {
     wt = matrix(rexp(nrow(data)*G), nrow(data), G)
-    wt  =wt/rowSums(wt)
+    wt =wt/rowSums(wt)
   }
 
   gpar = rgpar(data, G, wt=wt, model=model)
   gpar.update = create.update(x=data, G=G, model=model)
 
-  try({ for (i in 1:n) gpar = gpar.update(x=data, G=G, model=model )  }, silent=TRUE)
+  try({ for (i in 1:n) gpar = gpar.update(gpar, wt) }, silent=TRUE)
 
   return(gpar)
 }
+
 
 
 combinewk <- function(weights=NULL, label=NULL)	{
@@ -636,7 +648,7 @@ combinewk <- function(weights=NULL, label=NULL)	{
 }
 
 igpar.lab <- function(data=NULL, G=2, n=10, lab=NULL, model=NULL) {
-  z = combinewk(weights=matrix(0, nrow=nrow(data), ncol=G), label=lab)
+  z    = combinewk(weights=matrix(1/G, nrow=nrow(data), ncol=G), label=lab)
   gpar = igpar.wt(data=data, G=G, n=n, wt=z, model=model)
   return(gpar)
 }
@@ -691,10 +703,11 @@ getInitialization <- function(initialization=NULL, G=NULL, x=NULL, model=NULL) {
 
   if ( is.null( initialization ) )  gpar  = rgpar(data=x, G=G, wt=NULL, model=model)
   else if ( is.list(initialization) ) gpar = initialization
-  else if ( initialization[1] == 0) gpar = igpar.kmeans(data=x, G=G, n=10, model=model)
-  else if ( length(initialization) == 1 & initialization[1] > 0) gpar = igpar(data=x, G=G, m=initialization, n=10, model=model)
-  else if ( is.matrix(initialization) ) gpar = igpar.wt(data=x, G=G, n=10, wt=initialization, model=model)
-  else if ( is.vector(initialization) ) gpar = igpar.lab(data=x, G=G, n=10, lab=initialization, model=model)
+  else if ( initialization[1] == 0) gpar = igpar.kmeans(data=x, G=G, n=20, model=model)
+  else if ( length(initialization) == 1 & initialization[1] > 0) gpar = igpar(data=x, G=G, m=ceiling(initialization), n=20, model=model, randonly = FALSE)
+  else if ( length(initialization) == 1 & initialization[1] < 0) gpar = igpar(data=x, G=G, m=ceiling(initialization), n=20, model=model, randonly = TRUE)
+  else if ( is.matrix(initialization) ) gpar = igpar.wt(data=x, G=G, n=20, wt=initialization, model=model)
+  else if ( is.vector(initialization) ) gpar = igpar.lab(data=x, G=G, n=20, lab=initialization, model=model)
   else stop("Wrong initialization")
 
   gpar
@@ -743,15 +756,16 @@ EM <- function(data=NULL, initialization=NULL, G=2, max.iter=100, epsilon=1e-2, 
 
 
 
-EMGr <- function(data=NULL, initialization=NULL, iModel="EIIE", G=2, max.iter=500, epsilon=1e-2, label=NULL, modelSet="all", skewness=FALSE, keepResults=FALSE, seedno=1, scale=TRUE) {
+EMGr <- function(data=NULL, initialization=10, iModel="EIIE", G=2, max.iter=500, epsilon=1e-2, label=NULL, modelSet="all", skewness=FALSE, keepResults=FALSE, seedno=1, scale=TRUE) {
   ## G can be a range of values.
   ## iModel is the model used for initialization.
   ## all models are started using the same z matrix resutling from initialization
   ## if modelSet="all" then all the model are sued default
+  ptm <- proc.time()
   set.seed(seedno)
   if(is.data.frame(data)) data <- data.matrix(data)
   if(scale==TRUE) data <- scale(data)
-  if (length(initialization) != 1 ) stop("Initialization can only be the number of random starts for this function")
+  #if (length(initialization) != 1 ) stop("Initialization can only be the number of random starts for this function")
 
   if (modelSet[1] == "all") {
     mne = c("EIIE", "VIIE", "EEIE", "VVIE", "EEEE", "EEVE", "VVEE", "VVVE")
@@ -768,12 +782,14 @@ EMGr <- function(data=NULL, initialization=NULL, iModel="EIIE", G=2, max.iter=50
   num.par    = matrix(NA, nrow=length(mn), ncol=length(G), dimnames =nam )
   loglik     = matrix(NA, nrow=length(mn), ncol=length(G), dimnames =nam )
   increasing = matrix(NA, nrow=length(mn), ncol=length(G), dimnames =nam )
+  zinitial   = list()
 
   result = list()
   for (k in 1:length(G)) {
     gpar0     = getInitialization(initialization, G=G[k], x=data, model=iModel)
     getlogden = create.logz(x=data, G=G[k], model=iModel)
     z0        = logden.to.weights(getlogden(gpar0), gpar0$pi)
+    zinitial[[k]] = z0
 
     result[[G[k]]] = list()
     result[[G[k]]] = lapply(1:length(mn), function(j) {
@@ -791,11 +807,12 @@ EMGr <- function(data=NULL, initialization=NULL, iModel="EIIE", G=2, max.iter=50
     loglik[which(!increasing,arr.ind = TRUE)] <- NA
   }
   BIC    = -2*loglik + num.par*log(nrow(data))
-  maxBIC = as.numeric(arrayInd(which.min(BIC), dim(BIC)))
+  bestBIC = as.numeric(arrayInd(which.min(BIC), dim(BIC)))
 
   if (keepResults) val = list(allModels=result)
   else val = list()
-  val = append(val, list( bestmod=result[[ G[maxBIC[2]] ]][[ maxBIC[1] ]],loglik=loglik, num.iter=num.iter,  num.par=num.par, BIC=BIC, maxBIC=maxBIC ) )
+  timetaken<-proc.time() - ptm
+  val = append(val, list(zinitial= zinitial,  bestmod=result[[ G[bestBIC[2]] ]][[ bestBIC[1] ]],loglik=loglik, num.iter=num.iter,  num.par=num.par, BIC=BIC, bestBIC=bestBIC,time=timetaken ) )
   class(val) <- "spemix"
   return(invisible(val))
 }
@@ -809,7 +826,7 @@ rgpar <- function(data=NULL, G=NULL, model=NULL, wt=NULL) {
 
   if (is.null(wt)) {
     wt = matrix( rexp(n*G), nrow=n, ncol=G )
-    wt = t(apply(wt, 1, function(z) {z/sum(z)} ))
+    if(G > 1) wt = t(apply(wt, 1, function(z) {z/sum(z)} )) else wt = matrix(apply(wt, 1, function(z) {z/sum(z)} ),ncol=1)
   }
 
   val = list()

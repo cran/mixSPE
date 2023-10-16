@@ -16,6 +16,7 @@ Print a summary of the model fit including the number of components and the scal
 Ignore this
 }
 }
+\value{Print function.}
 \author{
 Utkarsh J. Dang, Michael P. B. Gallaugher, Ryan P. Browne, and Paul D. McNicholas
 }

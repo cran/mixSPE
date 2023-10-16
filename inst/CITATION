@@ -1,0 +1,38 @@
+citHeader("To cite mixSPE in publications, please use:")
+
+bibentry(bibtype = "Article",
+  title        = "Model-based clustering and classification using mixtures of multivariate skewed power exponential distributions",
+  author      = c(person(given="Utkarsh J.", family="Dang", role=c("aut", "cre", "cph"), email="utkarshdang@cunet.carleton.ca"),
+  person(given="Ryan P.", family="Browne", role=c("aut", "cre", "cph")),
+  person(given="Michael P.B.", family="Gallaugher", role=c("aut", "cph")),
+  person(given="Paul D.", family="McNicholas", role=c("aut", "cph"))),
+  journal      = "Journal of Classification",
+  year         = "2023",
+  volume       = "40",
+  pages        = "145--167",
+  doi          = "10.1007/s00357-022-09427-7",
+
+  textVersion  =
+  paste("Dang, U.J., Gallaugher, M. P. B., Browne, R. P., & McNicholas, P. D. (2023).",
+        "Model-Based Clustering and Classification Using Mixtures of Multivariate Skewed Power Exponential Distributions.",
+        "Journal of Classification 40: 145--167.",
+        "doi: 10.1007/s00357-022-09427-7.")
+)
+bibentry(bibtype = "Article",
+  title        = "Mixtures of multivariate power exponential distributions",
+  author      = c(person(given="Utkarsh J.", family="Dang", role=c("aut", "cre", "cph"), email="utkarshdang@cunet.carleton.ca"),
+  person(given="Ryan P.", family="Browne", role=c("aut", "cre", "cph")),
+  person(given="Paul D.", family="McNicholas", role=c("aut", "cph"))),
+  journal      = "Biometrics",
+  year         = "2015",
+  volume       = "71",
+  pages        = "1081--1089",
+  doi          = "10.1111/biom.12351",
+
+  textVersion  =
+  paste("Dang, U.J., Browne, R.P., and McNicholas, P.D. (2015).",
+        "Mixtures of multivariate power exponential distributions.",
+        "Biometrics 71: 1081--1089.",
+        "doi: 10.1111/biom.12351.")
+)
+

@@ -1,6 +1,6 @@
 print.spemix <- function(x, ...) {
   #print fitted object
-  cat(ncol(x$bestmod$z), "groups and scale structure", x$bestmod$gpar$model, "was selected by the BIC.", "\n", "BIC was", x$BIC[x$maxBIC[1],x$maxBIC[2]])
+  cat(ncol(x$bestmod$z), "groups and scale structure", x$bestmod$gpar$model, "was selected by the BIC.", "\n", "BIC was", x$BIC[x$bestBIC[1],x$bestBIC[2]])
 }
 marginal_m_l <- function(my, mu, Sig, bval, p, log.d = FALSE) {
   #needed for calculating density of SPE
