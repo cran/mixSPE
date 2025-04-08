@@ -3,9 +3,21 @@ Type: Package
 Title: Mixtures of Power Exponential and Skew Power Exponential
         Distributions for Use in Model-Based Clustering and
         Classification
-Version: 0.9.2
-Date: 2023-10-16
-Author: Ryan P. Browne[aut, cre], Utkarsh J. Dang[aut, cre], Michael P. B. Gallaugher[ctb], and Paul D. McNicholas[aut]
+Version: 0.9.3
+Date: 2025-04-08
+Authors@R: c(person(given = c("Ryan", "P."),
+                      family = "Browne",
+                      role = c("aut")),
+               person(given = c("Utkarsh", "J."),
+                      family = "Dang",
+                      role = c("aut", "cre"),
+                      email = "utkarshdang@cunet.carleton.ca"),
+               person(given = c("Michael", "P.", "B."),
+                      family = "Gallaugher",
+                      role = "ctb"),
+               person(given = c("Paul", "D."),
+                      family = "McNicholas",
+                      role = "aut"))
 Maintainer: Utkarsh J. Dang <utkarshdang@cunet.carleton.ca>
 Description: Mixtures of skewed and elliptical distributions are implemented using mixtures of multivariate skew 
     power exponential and power exponential distributions, respectively. A generalized expectation-maximization 
@@ -15,6 +27,10 @@ Encoding: UTF-8
 Imports: mvtnorm
 Suggests: testthat
 NeedsCompilation: no
-Packaged: 2023-10-16 20:13:45 UTC; udang
+Packaged: 2025-04-08 18:47:34 UTC; udang
+Author: Ryan P. Browne [aut],
+  Utkarsh J. Dang [aut, cre],
+  Michael P. B. Gallaugher [ctb],
+  Paul D. McNicholas [aut]
 Repository: CRAN
-Date/Publication: 2023-10-16 22:50:06 UTC
+Date/Publication: 2025-04-08 19:40:06 UTC

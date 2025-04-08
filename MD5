@@ -1,11 +1,11 @@
-33ff95fd15a7048a8a54269141cf971b *DESCRIPTION
+c446ba61572b4f40434e628feff0502f *DESCRIPTION
 1548c6944d7c777d1b72bddf64a0775d *NAMESPACE
-782e4a6a9826526f4e7306956bb8ce89 *NEWS
+1cca7d1a466dddaff56d46d387ebfd1f *NEWS
 285d195c29182f7ebc982d8042aa30dd *R/miscfunctions.R
 4fac46c65efc53b7f014fe2a4fb2f494 *R/skewed_models_Browne.R
 2d33bf9e99dcb509c2b3c347918e4408 *inst/CITATION
 43c70add76971d1268206522814bb585 *man/EMGr.Rd
-1cf9db2703bc2a707cdfc5af3ccb5efb *man/mixSPE-package.Rd
+e50546ce93c9e4e7764708d64a963f07 *man/mixSPE-package.Rd
 f8e4ee3a4d9a7e30d1f9bce1164d8646 *man/print.spemix.Rd
 d5675176b652dc3313b3ecdec9bc1234 *man/rpe.Rd
 5b741c9906fd1c57592147f3dfb9d5d9 *man/rspe.Rd

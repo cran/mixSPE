@@ -1,3 +1,7 @@
+mixSPE v0.9.3 (Release date: 2025-04-08)
+==============
+Addressed issue received from CRAN that DESCRIPTION had an Author field indicating more than one person with a "cre" maintainer role, where the CRAN Policy asks for a single maintainer.
+
 mixSPE v0.9.2 (Release date: 2023-10-16)
 ==============
 Updated email address to current institution. More initialization options.
